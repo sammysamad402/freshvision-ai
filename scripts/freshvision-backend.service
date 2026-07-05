@@ -1,0 +1,35 @@
+[Unit]
+Description=FreshVision AI Backend (FastAPI)
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=freshvision
+Group=freshvision
+WorkingDirectory=/opt/freshvision-ai/backend
+
+# Load secrets from /etc/freshvision/env (chmod 600, owned by root)
+EnvironmentFile=/etc/freshvision/env
+
+ExecStart=/opt/freshvision-ai/.venv/bin/uvicorn app.main:app \
+    --host 127.0.0.1 \
+    --port 8000 \
+    --workers 1 \
+    --loop asyncio \
+    --access-log
+
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/var/log/freshvision/backend.log
+StandardError=append:/var/log/freshvision/backend_errors.log
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/freshvision-ai/storage /var/log/freshvision
+
+[Install]
+WantedBy=multi-user.target

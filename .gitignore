@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+*.pt
+*.onnx
+*_openvino/
+
+# Node
+node_modules/
+dist/
+.cache/
+
+# Storage
+backend/storage/
+*.db
+*.log
+
+# Secrets
+.env
+nginx/ssl/*.pem
+nginx/ssl/*.key
+nginx/ssl/*.crt
+
+# Docker
+*.tar
+
+# OS
+.DS_Store
+Thumbs.db

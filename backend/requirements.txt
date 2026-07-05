@@ -1,0 +1,33 @@
+# Core
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+pydantic==2.9.2
+
+# AI / CV
+ultralytics==8.3.0
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
+Pillow==10.4.0
+
+# Database — works with SQLite (dev) and PostgreSQL (production)
+sqlalchemy[asyncio]==2.0.36
+aiosqlite==0.20.0        # SQLite driver (local dev)
+asyncpg==0.29.0          # PostgreSQL driver (Railway / Render / Supabase)
+
+# Storage
+supabase==2.9.1          # Supabase Storage + Auth client
+
+# Auth / Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+# passlib 1.7.4 reads bcrypt.__about__.__version__ to detect the backend
+# version; bcrypt>=4.1 removed that attribute, which throws
+# "(trapped) error reading bcrypt version" at startup. Pinning to 4.0.1
+# keeps passlib's version probe working.
+bcrypt==4.0.1
+slowapi==0.1.9
+
+# Export
+pandas==2.2.2
+openvino==2024.4.0       # Intel CPU acceleration (optional, safe to skip if offline)

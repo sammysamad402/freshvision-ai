@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+body { background: #0f1117; color: #e2e8f0; margin: 0; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1e2336; }
+::-webkit-scrollbar-thumb { background: #3b4a6b; border-radius: 3px; }
+
+@layer components {
+  .card { @apply bg-surface-1 border border-surface-3 rounded-xl p-5; }
+  .btn-primary { @apply bg-brand hover:bg-brand-dim text-black font-semibold px-4 py-2 rounded-lg transition-colors text-sm; }
+  .btn-ghost { @apply border border-surface-3 hover:border-brand text-slate-300 hover:text-brand px-4 py-2 rounded-lg transition-colors text-sm; }
+  .badge { @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium; }
+  .stat-value { @apply text-3xl font-bold font-mono; }
+  .label { @apply text-xs font-medium text-muted uppercase tracking-wider; }
+}
