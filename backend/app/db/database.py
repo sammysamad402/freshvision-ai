@@ -52,19 +52,26 @@ def _make_engine() -> AsyncEngine:
 
     if url.startswith("postgresql"):
         logger.info("Database backend: PostgreSQL")
+        import uuid
+        from sqlalchemy.pool import NullPool
         return create_async_engine(
             url,
-            pool_size=5,
-            max_overflow=10,
-            pool_pre_ping=True,
+            poolclass=NullPool,
             echo=False,
-            # Supabase/PgBouncer in "transaction" pooling mode doesn't support
-            # server-side prepared statements (each request can land on a
-            # different backend connection), which causes
-            # DuplicatePreparedStatementError. Disabling asyncpg's statement
-            # cache makes every query a plain unnamed statement, which works
-            # fine with transaction-mode poolers.
-            connect_args={"statement_cache_size": 0},
+            # Supabase (and most managed Postgres) puts you behind PgBouncer in
+            # "transaction" pooling mode: every query can land on a different
+            # physical backend connection, so asyncpg's usual named prepared
+            # statements collide across sessions ("DuplicatePreparedStatement
+            # Error"). Disabling both caches and generating a fresh random
+            # statement name every time avoids that entirely. NullPool is used
+            # so SQLAlchemy doesn't try to hold/reuse its own connections on
+            # top of PgBouncer's pooling. This is the fix documented at:
+            # https://docs.sqlalchemy.org/en/20/dialects/postgresql.html#disabling-the-postgresql-asyncpg-prepared-statement-cache
+            connect_args={
+                "statement_cache_size": 0,
+                "prepared_statement_cache_size": 0,
+                "prepared_statement_name_func": lambda: f"__asyncpg_{uuid.uuid4()}__",
+            },
         )
 
     # Default: SQLite (local dev or Docker without DATABASE_URL)
