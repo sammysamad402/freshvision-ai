@@ -221,15 +221,24 @@ async def init_db() -> None:
                 except Exception:
                     pass
 
-        # Migration: older deployments may already have an `inspections` table
+       # Migration: older deployments may already have an `inspections` table
         # without the owner_username column (added for per-user data privacy).
-        try:
+        # IMPORTANT: on Postgres, any statement that errors aborts the WHOLE
+        # transaction — every later statement in this same block would then
+        # fail too, even if the error was caught in Python. So we check first
+        # instead of catching a failure.
+        if _is_postgres():
             await conn.execute(text(
-                "ALTER TABLE inspections ADD COLUMN owner_username TEXT NOT NULL DEFAULT ''"
+                "ALTER TABLE inspections ADD COLUMN IF NOT EXISTS owner_username TEXT NOT NULL DEFAULT ''"
             ))
-            logger.info("Migrated inspections table: added owner_username column")
-        except Exception:
-            pass  # column already exists
+        else:
+            cols = await conn.execute(text("PRAGMA table_info(inspections)"))
+            existing = {row[1] for row in cols.fetchall()}
+            if "owner_username" not in existing:
+                await conn.execute(text(
+                    "ALTER TABLE inspections ADD COLUMN owner_username TEXT NOT NULL DEFAULT ''"
+                ))
+                logger.info("Migrated inspections table: added owner_username column")
 
         # Seed default demo users if empty — only when explicitly enabled.
         from app.core.config import SEED_DEMO_USERS
