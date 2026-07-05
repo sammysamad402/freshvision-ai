@@ -12,11 +12,7 @@ RUN pip install --no-cache-dir --upgrade pip \
  && pip install --no-cache-dir -r requirements.txt
 
 FROM deps AS model
-RUN python -c "
-import os; os.environ['OMP_NUM_THREADS']='1'
-from ultralytics import YOLO; YOLO('yolov8n.pt')
-print('Weights cached.')
-" 2>/dev/null || echo "Offline build — weights will download at runtime."
+RUN python -c "import os; os.environ['OMP_NUM_THREADS']='1'; from ultralytics import YOLO; YOLO('yolov8n.pt'); print('Weights cached.')" || echo "Offline build — weights will download at runtime."
 
 FROM model AS app
 WORKDIR /app

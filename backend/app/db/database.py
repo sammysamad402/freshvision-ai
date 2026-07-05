@@ -53,7 +53,18 @@ def _make_engine() -> AsyncEngine:
     if url.startswith("postgresql"):
         logger.info("Database backend: PostgreSQL")
         return create_async_engine(
-            url, pool_size=5, max_overflow=10, pool_pre_ping=True, echo=False
+            url,
+            pool_size=5,
+            max_overflow=10,
+            pool_pre_ping=True,
+            echo=False,
+            # Supabase/PgBouncer in "transaction" pooling mode doesn't support
+            # server-side prepared statements (each request can land on a
+            # different backend connection), which causes
+            # DuplicatePreparedStatementError. Disabling asyncpg's statement
+            # cache makes every query a plain unnamed statement, which works
+            # fine with transaction-mode poolers.
+            connect_args={"statement_cache_size": 0},
         )
 
     # Default: SQLite (local dev or Docker without DATABASE_URL)

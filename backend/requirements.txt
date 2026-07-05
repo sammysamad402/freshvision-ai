@@ -5,6 +5,13 @@ python-multipart==0.0.9
 pydantic==2.9.2
 
 # AI / CV
+# CPU-only PyTorch wheels — installed BEFORE ultralytics so pip resolves
+# ultralytics' torch requirement against these instead of downloading the
+# default CUDA build (which is >2GB and useless on an i3/UHD box with no
+# NVIDIA GPU). Must stay above the ultralytics line.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.1+cpu
+torchvision==0.19.1+cpu
 ultralytics==8.3.0
 opencv-python-headless==4.10.0.84
 numpy==1.26.4

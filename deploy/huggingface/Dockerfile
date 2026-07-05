@@ -26,13 +26,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # Pre-download YOLO weights at build time (so first inference isn't slow)
 # HF has internet during build; weights are baked into the image layer
-RUN python -c "
-import os
-os.environ['OMP_NUM_THREADS'] = '1'
-from ultralytics import YOLO
-YOLO('yolov8n.pt')
-print('YOLOv8n weights cached in image.')
-" 2>/dev/null || echo "Weight download skipped — will download at runtime."
+RUN python -c "import os; os.environ['OMP_NUM_THREADS']='1'; from ultralytics import YOLO; YOLO('yolov8n.pt'); print('YOLOv8n weights cached in image.')" || echo "Weight download skipped — will download at runtime."
 
 # Copy app code
 COPY --chown=user:user . .

@@ -55,7 +55,7 @@ export default function LoginPage({ onLogin, onSwitchToRegister }: {
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted"/>
                 <input value={username} onChange={e=>setUsername(e.target.value)}
                   className="w-full bg-surface-2 border border-surface-3 rounded-lg pl-9 pr-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand/60 placeholder:text-muted"
-                  placeholder="admin" required/>
+                  placeholder="username" required/>
               </div>
             </div>
             <div>
